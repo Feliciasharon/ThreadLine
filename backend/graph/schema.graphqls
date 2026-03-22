@@ -1,0 +1,19 @@
+scalar Time
+
+type NewsItem {
+  id: ID!
+  title: String!
+  url: String!
+  source: String!
+  publishedAt: Time!
+  summary: String!
+}
+
+type Query {
+  news(limit: Int = 50, since: Time): [NewsItem!]!
+}
+
+type Mutation {
+  refresh: Boolean!
+}
+

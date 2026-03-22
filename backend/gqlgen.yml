@@ -1,0 +1,20 @@
+schema:
+  - graph/schema.graphqls
+exec:
+  filename: graph/generated/generated.go
+  package: generated
+model:
+  filename: graph/model/models_gen.go
+  package: model
+resolver:
+  layout: follow-schema
+  dir: graph
+  package: graph
+autobind:
+  - github.com/yourname/go-news-llm/graph/model
+
+models:
+  Time:
+    model:
+      - time.Time
+

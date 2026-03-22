@@ -1,0 +1,41 @@
+databases:
+  - name: go-news-llm-db
+    plan: free
+
+services:
+  - type: web
+    name: go-news-llm-api
+    runtime: go
+    rootDir: backend
+    buildCommand: go build -o /tmp/api ./cmd/api
+    startCommand: /tmp/api
+    envVars:
+      - key: API_ADDR
+        value: 0.0.0.0:8080
+      - key: CORS_ORIGIN
+        value: https://YOUR_VERCEL_DOMAIN
+      - key: DATABASE_URL
+        fromDatabase:
+          name: go-news-llm-db
+          property: connectionString
+      # Leave NATS_URL unset on free tiers (optional).
+      # - key: NATS_URL
+      #   value: nats://...
+
+  - type: worker
+    name: go-news-llm-worker
+    runtime: go
+    rootDir: backend
+    buildCommand: go build -o /tmp/worker ./cmd/worker
+    startCommand: /tmp/worker
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: go-news-llm-db
+          property: connectionString
+      # Choose ONE summarizer:
+      # - key: GEMINI_API_KEY
+      #   sync: false
+      # - key: OLLAMA_BASE_URL
+      #   value: http://...
+

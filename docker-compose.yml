@@ -1,0 +1,53 @@
+services:
+  nats:
+    image: nats:2.10
+    command: ["-js"]
+    ports:
+      - "4222:4222"
+
+  deps:
+    image: golang:1.23
+    working_dir: /app/backend
+    volumes:
+      - ./:/app
+    command: ["/bin/sh", "-lc", "/usr/local/go/bin/go mod tidy && /usr/local/go/bin/go mod download"]
+
+  api:
+    image: golang:1.23
+    working_dir: /app/backend
+    volumes:
+      - ./:/app
+    environment:
+      - DB_PATH=/app/backend/data/news.db
+      - NATS_URL=nats://nats:4222
+      - API_ADDR=:8080
+      - CORS_ORIGIN=http://localhost:5173
+      - GOFLAGS=-mod=readonly
+    ports:
+      - "8080:8080"
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      nats:
+        condition: service_started
+    command: ["/usr/local/go/bin/go", "run", "./cmd/api"]
+
+  worker:
+    image: golang:1.23
+    working_dir: /app/backend
+    volumes:
+      - ./:/app
+    environment:
+      - DB_PATH=/app/backend/data/news.db
+      - NATS_URL=nats://nats:4222
+      - GOFLAGS=-mod=readonly
+      # Set GEMINI_* in a local .env file (gitignored). Optional: OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      nats:
+        condition: service_started
+    command: ["/usr/local/go/bin/go", "run", "./cmd/worker"]
+
