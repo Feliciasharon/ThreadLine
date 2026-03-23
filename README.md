@@ -98,6 +98,5 @@ Target:
 ### Steps to run after deploying:
 1. Turn on the Render PostgreSQL db and webservice (ThreadLine)
 2. run ```docker compose down && docker compose up --build ``` locally as you need to subscribe to deploy it on Render (background worker)
-3. Access Vercel - https://thread-line-718xl3acp-feliciasharons-projects.vercel.app/
-
+3. Access Vercel - https://thread-line-feliciasharons-projects.vercel.app/
    
