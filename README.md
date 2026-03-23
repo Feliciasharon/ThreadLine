@@ -1,13 +1,16 @@
-# Go + LLM Live News (Free-first)
+# ThreadLine - AI Powered Live News Feed
 
-This repo is a **free-first** demo that combines:
+
+<img width="1490" height="727" alt="image" src="https://github.com/user-attachments/assets/9d48906c-169d-4ff4-aeba-f92b656984b4" />
+
+
 
 - **Go backend**: GraphQL API + SSE “live updates”
 - **Worker service**: fetches live news (RSS), summarizes via **Gemini (optional)** or **local Ollama (optional)**, stores in DB
 - **Distributed component**: **NATS pub/sub** (local + Docker)
 - **Beautiful frontend** (coming next): Vite + React + Tailwind
 
-## News sources (free)
+## News sources
 
 Currently pulled via RSS in `backend/internal/news/fetch.go`:
 
@@ -15,8 +18,6 @@ Currently pulled via RSS in `backend/internal/news/fetch.go`:
 - The Guardian World
 - NYT World
 - NPR World
-
-You can add more RSS sources anytime.
 
 ## Local run (recommended)
 
@@ -52,7 +53,7 @@ Query news:
 query { news(limit: 20) { title source url publishedAt summary } }
 ```
 
-## Summarization modes (choose one)
+## Summarization modes
 
 - **Gemini (free tier until quota is hit)**:
   - Set `GEMINI_API_KEY` (default model is `gemini-2.0-flash`; override with `GEMINI_MODEL` if Google renames models — use **ListModels** in AI Studio if you get 404)
@@ -71,14 +72,13 @@ query { news(limit: 20) { title source url publishedAt summary } }
 
 This makes Render robust because API + worker share the same durable database.
 
-## Deploy (planned)
+## Deploy 
 
 Target:
 
 - **Vercel**: frontend
 - **Render**: Go API + worker
 
-Note: free tiers are great for demos but may sleep/scale-to-zero.
 
 ### Vercel (frontend)
 
@@ -94,3 +94,10 @@ Note: free tiers are great for demos but may sleep/scale-to-zero.
 - After Vercel deploy, set `CORS_ORIGIN` on the Render API to your Vercel domain
 - Optional: set `GEMINI_API_KEY` on the worker
 
+
+### Steps to run after deploying:
+1. Turn on the Render PostgreSQL db and webservice (ThreadLine)
+2. run ```docker compose down && docker compose up --build ``` locally as you need to subscribe to deploy it on Render (background worker)
+3. Access Vercel - https://thread-line-718xl3acp-feliciasharons-projects.vercel.app/
+
+   
