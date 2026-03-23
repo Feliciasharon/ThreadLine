@@ -16,6 +16,7 @@ func Connect(url string) (*Client, error) {
 	}
 	nc, err := nats.Connect(
 		url,
+		nats.UserCredentials("/etc/secrets/creds.creds"),
 		nats.Timeout(3*time.Second),
 		nats.RetryOnFailedConnect(true),
 		nats.MaxReconnects(-1),
